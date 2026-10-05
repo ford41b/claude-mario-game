@@ -1,0 +1,13 @@
+{
+  "name": "super-mario-bros-web",
+  "version": "1.0.0",
+  "description": "A faithful browser port of the NES Super Mario Bros. engine",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node tools/serve.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

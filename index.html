@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Super Mario Bros.</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main class="layout">
+    <section class="stage">
+      <div id="viewport" class="viewport">
+        <canvas id="screen" width="256" height="240" aria-label="Game screen"></canvas>
+        <div id="paused-badge" class="badge" hidden>FROZEN &mdash; press P to resume</div>
+      </div>
+      <div class="toolbar" role="toolbar" aria-label="Game controls">
+        <button id="btn-pause" type="button" title="Freeze/resume emulation (P)">Freeze</button>
+        <button id="btn-reset" type="button" title="Reset to title screen (F2)">Reset</button>
+        <button id="btn-mute" type="button" title="Mute (M)">Mute</button>
+        <label class="vol" title="Volume">Vol <input id="volume" type="range" min="0" max="100" step="1" value="80" aria-label="Volume"></label>
+        <button id="btn-aspect" type="button" title="Square pixels or the 8:7 pixel shape of a TV">Pixels: square</button>
+        <button id="btn-crop" type="button" title="Hide the top and bottom 8 lines like a TV">Overscan: shown</button>
+        <button id="btn-fullscreen" type="button" title="Fullscreen (F)">Fullscreen</button>
+      </div>
+      <p class="note"><span id="audio-note"></span> <span id="pad-note"></span></p>
+    </section>
+
+    <aside class="guide" aria-label="Controls">
+      <h2>Controls</h2>
+      <table>
+        <tr><th>Move</th><td><kbd>&larr;</kbd><kbd>&rarr;</kbd> or <kbd>A</kbd><kbd>D</kbd></td></tr>
+        <tr><th>Crouch / pipe</th><td><kbd>&darr;</kbd> or <kbd>S</kbd></td></tr>
+        <tr><th>Climb</th><td><kbd>&uarr;</kbd><kbd>&darr;</kbd> or <kbd>W</kbd><kbd>S</kbd></td></tr>
+        <tr><th>Jump / swim (A)</th><td><kbd>X</kbd> <kbd>K</kbd> <kbd>Space</kbd></td></tr>
+        <tr><th>Run / fire (B)</th><td><kbd>Z</kbd> <kbd>J</kbd></td></tr>
+        <tr><th>Start / pause</th><td><kbd>Enter</kbd></td></tr>
+        <tr><th>Select</th><td><kbd>Right Shift</kbd> <kbd>Tab</kbd></td></tr>
+      </table>
+      <h3>Gamepad</h3>
+      <p>D-pad or left stick. Bottom/right face button = A, left/top = B, Start, Select.</p>
+      <h3>Other keys</h3>
+      <table>
+        <tr><th>Freeze</th><td><kbd>P</kbd></td></tr>
+        <tr><th>Reset</th><td><kbd>F2</kbd></td></tr>
+        <tr><th>Mute</th><td><kbd>M</kbd></td></tr>
+        <tr><th>Fullscreen</th><td><kbd>F</kbd></td></tr>
+      </table>
+      <p class="tip">Title screen: Select picks 1 or 2 players. After a game over, hold A and press Start to continue from the current world.</p>
+    </aside>
+  </main>
+
+  <script src="src/data/romdata.js"></script>
+  <script src="src/core/ramdefs.js"></script>
+  <script src="src/core/machine.js"></script>
+  <script src="src/core/ppu.js"></script>
+  <script src="src/core/apu-synth.js"></script>
+  <script src="assets/music/tracks.js"></script>
+  <script src="src/core/audio.js"></script>
+  <script src="src/core/input.js"></script>
+  <script src="src/gfx/tiles.js"></script>
+  <script src="src/gfx/art-font.js"></script>
+  <script src="src/gfx/title.js"></script>
+  <script src="src/game/sound.js"></script>
+  <script src="src/game/frame.js"></script>
+  <script src="src/game/area.js"></script>
+  <script src="src/game/engine.js"></script>
+  <script src="src/game/enemies.js"></script>
+  <script src="src/game/collision.js"></script>
+  <script src="src/game/gfx.js"></script>
+  <script src="src/main.js"></script>
+</body>
+</html>
