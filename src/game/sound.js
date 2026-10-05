@@ -1,11 +1,12 @@
 // Sound engine: port of the original sound-effect routines (square 1, square 2
 // and noise SFX, pause jingle) writing to the emulated APU registers.
 //
-// The background music compositions are copyrighted and are NOT reproduced.
-// Instead, MusicHandler keeps the original engine's music *state* (which
-// track is playing and how long event jingles last), because the game logic
-// waits on it (death sequence, end-of-level timing). Track changes are
-// reported to src/core/audio.js, which can play optional user-supplied audio.
+// The background music compositions are not included. When the player loads
+// their own ROM, src/game/music.js runs the original music engine on its note
+// data. Otherwise MusicHandler below keeps only the music *state* (which track
+// is playing and how long event jingles last), because the game logic waits
+// on it (death sequence, end-of-level timing); track changes are reported to
+// src/core/audio.js, which can play optional user-supplied audio files.
 'use strict';
 
 const APU_STATUS = 0x4015;
@@ -84,6 +85,16 @@ function SoundEngine() {
   ram[Square2SoundQueue] = 0;
   ram[NoiseSoundQueue] = 0;
   ram[PauseSoundQueue] = 0;
+  // ramp the DMC output level during ground and water music (this lowers the
+  // triangle and noise volume slightly through the APU's mixer)
+  const y = ram[DAC_Counter];
+  let dec = true;
+  if (ram[AreaMusicBuffer] & 0x03) {
+    ram[DAC_Counter]++;
+    if (y < 0x30) dec = false;
+  }
+  if (dec && y !== 0) ram[DAC_Counter]--;
+  apuW(0x4011, y);
 }
 
 // --------------------------------
@@ -397,6 +408,7 @@ function DecrementSfx3Length() {
 // Music state (timing only).
 
 function MusicHandler() {
+  if (RomMusic.enabled) return RomMusic.MusicHandler();
   const ev = ram[EventMusicQueue];
   const area = ram[AreaMusicQueue];
   if (ev) {

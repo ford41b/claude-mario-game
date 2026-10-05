@@ -33,6 +33,7 @@
   // ------------------------------------------------------------------ game
   function boot() {
     Art.finish();
+    UserRom.restore();
     NesAudio.reset();
     PowerOn();
   }
@@ -168,7 +169,8 @@
     btnCrop.textContent = prefs.crop ? 'Overscan: hidden' : 'Overscan: shown';
     if (!NesAudio.started) audioNote.textContent = 'Click or press a key to enable sound.';
     else if (!NesAudio.ready) audioNote.textContent = 'Sound is suspended.';
-    else audioNote.textContent = NesAudio.musicFiles ? '' : 'Sound effects on. Music not included (see README).';
+    else if (RomMusic.enabled || NesAudio.musicFiles) audioNote.textContent = '';
+    else audioNote.textContent = 'Sound effects on. Music not included (see README).';
   }
 
   function setPaused(p) {
@@ -228,6 +230,32 @@
     padNote.textContent = '';
   });
 
+  // optional ROM file for the original graphics and music
+  const romFile = $('rom-file');
+  const romStatus = $('rom-status');
+  function updateRomUi(msg) {
+    const on = UserRom.loaded;
+    $('btn-rom-forget').hidden = !on;
+    $('rom-gfx-row').hidden = !on;
+    $('rom-music-row').hidden = !on;
+    $('rom-gfx').checked = UserRom.graphics;
+    $('rom-music').checked = UserRom.music;
+    $('btn-rom').textContent = on ? 'Replace ROM\u2026' : 'Load ROM file\u2026';
+    romStatus.textContent = msg || (on ? 'Using your ROM.' : '');
+  }
+  $('btn-rom').addEventListener('click', () => romFile.click());
+  romFile.addEventListener('change', async () => {
+    const f = romFile.files && romFile.files[0];
+    romFile.value = '';
+    if (!f) return;
+    const err = await UserRom.loadFile(f);
+    if (!err) resetConsole();
+    updateRomUi(err || 'ROM loaded: original graphics and music enabled.');
+  });
+  $('btn-rom-forget').addEventListener('click', () => { UserRom.forget(); resetConsole(); updateRomUi('ROM removed from this browser.'); });
+  $('rom-gfx').addEventListener('change', (e) => { UserRom.setGraphics(e.target.checked); resetConsole(); updateRomUi(); });
+  $('rom-music').addEventListener('change', (e) => { UserRom.setMusic(e.target.checked); resetConsole(); updateRomUi(); });
+
   window.addEventListener('resize', layout);
   document.addEventListener('fullscreenchange', layout);
 
@@ -241,5 +269,6 @@
   boot();
   layout();
   updateUi();
+  updateRomUi();
   requestAnimationFrame(tick);
 })();

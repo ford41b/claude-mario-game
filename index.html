@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Super Mario Bros.</title>
+  <link rel="icon" href="data:,">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -46,6 +47,17 @@
         <tr><th>Fullscreen</th><td><kbd>F</kbd></td></tr>
       </table>
       <p class="tip">Title screen: Select picks 1 or 2 players. After a game over, hold A and press Start to continue from the current world.</p>
+
+      <h3>Original graphics &amp; music</h3>
+      <p class="tip">This project ships redrawn graphics and no music. If you own the cartridge, load its ROM file (.nes) to use the original graphics and music. The file stays in this browser.</p>
+      <div class="rom">
+        <input id="rom-file" type="file" accept=".nes" hidden>
+        <button id="btn-rom" type="button">Load ROM file&hellip;</button>
+        <button id="btn-rom-forget" type="button" hidden>Forget ROM</button>
+        <label id="rom-gfx-row" hidden><input id="rom-gfx" type="checkbox"> Original graphics</label>
+        <label id="rom-music-row" hidden><input id="rom-music" type="checkbox"> Original music</label>
+        <p id="rom-status" class="tip" role="status"></p>
+      </div>
     </aside>
   </main>
 
@@ -65,13 +77,16 @@
   <script src="src/gfx/art-items.js"></script>
   <script src="src/gfx/art-title.js"></script>
   <script src="src/gfx/title.js"></script>
+  <script src="src/data/romlabels.js"></script>
   <script src="src/game/sound.js"></script>
+  <script src="src/game/music.js"></script>
   <script src="src/game/frame.js"></script>
   <script src="src/game/area.js"></script>
   <script src="src/game/engine.js"></script>
   <script src="src/game/enemies.js"></script>
   <script src="src/game/collision.js"></script>
   <script src="src/game/gfx.js"></script>
+  <script src="src/core/userrom.js"></script>
   <script src="src/main.js"></script>
 </body>
 </html>

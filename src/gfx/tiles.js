@@ -1,12 +1,17 @@
 // Tile graphics. All artwork in src/gfx/art-*.js is original pixel art drawn
 // for this project in the style of the NES game (2 bits per pixel, 8x8 tiles,
 // colours chosen by palettes at run time). No graphics data from the original
-// cartridge is used.
+// cartridge is included; src/core/userrom.js can swap in the graphics from a
+// ROM file the player supplies.
 //
 // Art is authored as pictures (strings of '.', '1', '2', '3' = colour 0-3),
 // cut into 8x8 cells and stored under the tile numbers the game engine uses.
 // A cell can be stored flipped, mirroring how the engine flips sprites.
 'use strict';
+
+// Engine adjustments that only exist to suit this project's redrawn art
+// (switched off when the player's own ROM graphics are in use).
+const ArtTweaks = { retainerMirror: true };
 
 const TILES = {
   bg: new Uint8Array(256 * 64),

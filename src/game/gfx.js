@@ -342,7 +342,7 @@ function EnemyGfxHandler(x) {
       if (e === Goomba || e === 0x08 || e === Podoboo || e >= 0x18) {
         step = 'defeated';
       } else if (e === 0x15) {
-        if (ram[WorldNumber] < World8) {
+        if (ArtTweaks.retainerMirror && ram[WorldNumber] < World8) {
           gx = 0xa2;
           ram[0xec] = 0x03;
         }
@@ -410,7 +410,7 @@ function EnemyGfxHandler(x) {
       ram[sprA(y + 20)] = 0x42;
       // Art accommodation (not in the original): the redrawn mushroom
       // retainer is symmetric, so mirror the right column of its top rows.
-      if (ram[WorldNumber] < World8) {
+      if (ArtTweaks.retainerMirror && ram[WorldNumber] < World8) {
         ram[sprA(y + 4)] |= 0x40;
         ram[sprA(y + 12)] |= 0x40;
       }

@@ -35,6 +35,7 @@ class NesApu {
     this.nz = { enabled: false, halt: false, constVol: false, vol: 0, mode: 0, period: 4, len: 0, lfsr: 1, timer: 4,
       envStart: false, envDiv: 0, envDecay: 0 };
     this.seqCycle = 0;
+    this.dmc = 0;
     this.queue = [];
     this.started = false;
     this.starved = 0;
@@ -100,6 +101,9 @@ class NesApu {
       case 0x400f:
         if (this.nz.enabled) this.nz.len = this.LEN[v >> 3];
         this.nz.envStart = true;
+        break;
+      case 0x4011:
+        this.dmc = v & 0x7f;
         break;
       case 0x4015:
         this.p[0].enabled = (v & 1) !== 0; if (!this.p[0].enabled) this.p[0].len = 0;
@@ -272,7 +276,7 @@ class NesApu {
       const nz = this.noiseOut(cps);
       const ps = p1 + p2;
       const pulse = ps > 0 ? 95.88 / (8128 / ps + 100) : 0;
-      const tndIn = tr / 8227 + nz / 12241;
+      const tndIn = tr / 8227 + nz / 12241 + this.dmc / 22638;
       const tnd = tndIn > 0 ? 159.79 / (1 / tndIn + 100) : 0;
       let s = pulse + tnd;
       // two first-order high-pass filters (~90 Hz and ~440 Hz) and a low-pass, as on the console
