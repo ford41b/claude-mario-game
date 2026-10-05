@@ -406,7 +406,15 @@ function EnemyGfxHandler(x) {
   if (e === Bloober || e === PiranhaPlant || e === Podoboo) mirror = true;
   else if (e === Spiny && alt !== 0x05) mirror = false;
   else {
-    if (e === 0x15) ram[sprA(y + 20)] = 0x42;
+    if (e === 0x15) {
+      ram[sprA(y + 20)] = 0x42;
+      // Art accommodation (not in the original): the redrawn mushroom
+      // retainer is symmetric, so mirror the right column of its top rows.
+      if (ram[WorldNumber] < World8) {
+        ram[sprA(y + 4)] |= 0x40;
+        ram[sprA(y + 12)] |= 0x40;
+      }
+    }
     mirror = alt >= 0x02;
   }
   if (mirror && !ram[BowserGfxFlag]) {

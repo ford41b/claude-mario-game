@@ -17,10 +17,12 @@ const TILES = {
 
 const Art = (() => {
   const table = (name) => (name === 'bg' ? TILES.bg : TILES.spr);
+  // pictures kept for the art preview tool (not used by the game)
+  const previews = typeof window === 'undefined' ? [] : null;
 
   function parseRows(rows) {
     if (typeof rows === 'string') {
-      rows = rows.split('\n').map((r) => r.trim()).filter((r) => r.length);
+      rows = rows.split('\n').map((r) => r.replace(/\s+/g, '')).filter((r) => r.length);
     }
     return rows.map((r) => [...r].map((ch) => {
       if (ch === '1' || ch === '2' || ch === '3') return ch.charCodeAt(0) - 48;
@@ -57,8 +59,11 @@ const Art = (() => {
 
   // layout: array of rows, each an array of cells. A cell is a tile number,
   // null (unused), or [tile, flip].
-  function pic(tbl, layout, rows, label = '') {
+  function pic(tbl, layout, rows, label = '', pal = null) {
     const px = parseRows(rows);
+    if (pal && previews) {
+      previews.push({ label, pal, px, w: Math.max(...px.map((r) => r.length)), h: px.length });
+    }
     layout.forEach((cells, r) => {
       cells.forEach((cell, c) => {
         if (cell === null) return;
@@ -108,5 +113,5 @@ const Art = (() => {
     }
   }
 
-  return { pic, tile, strip, copy, fill, finish };
+  return { pic, tile, strip, copy, fill, finish, previews };
 })();
