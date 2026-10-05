@@ -68,14 +68,18 @@
       availW = window.innerWidth;
       availH = window.innerHeight;
     } else {
-      const box = viewport.parentElement.getBoundingClientRect();
-      availW = Math.max(256, box.width);
-      availH = Math.max(240, window.innerHeight - 140);
+      // side-by-side layout above 900px (controls panel 250px + gap), stacked below
+      const wide = window.innerWidth > 900;
+      availW = Math.max(160, window.innerWidth - 32 - (wide ? 274 : 0));
+      availH = Math.max(150, window.innerHeight - (wide ? 110 : 140));
     }
-    // largest size that fits; in the page use whole multiples of the source
-    // height (exact pixels), in fullscreen fill the screen
+    // largest size that fits; in the page prefer whole multiples of the
+    // source height (exact pixels) unless that wastes too much space
     let scale = Math.min(availW / aspectW, availH / srcH);
-    if (!fs && scale * dpr >= 1) scale = Math.floor(scale * dpr) / dpr;
+    if (!fs && scale * dpr >= 1) {
+      const whole = Math.floor(scale * dpr) / dpr;
+      if (whole / scale >= 0.75) scale = whole;
+    }
     const cssW = Math.round(aspectW * scale);
     const cssH = Math.round(srcH * scale);
     canvas.style.width = cssW + 'px';

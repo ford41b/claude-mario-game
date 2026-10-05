@@ -142,14 +142,21 @@ function ppuRender(out /* Uint32Array 256*240 */) {
       bgOpaque[x] = pix;
       out[rowOff + x] = pix === 0 ? backdrop : NES_ABGR[pal[palHi * 4 + pix] & 0x3f];
     }
-    // sprites: lower OAM index has priority; priority resolved before BG test
-    for (let x = 0; x < SCREEN_W; x++) sprLine[x] = 0;
-    for (let s = 63; s >= 0; s--) {
-      const o = s * 4;
-      const sy = oam[o];
+    // sprite evaluation: the first 8 sprites in OAM order that cover this
+    // line are shown, the rest are dropped (the hardware limit that makes
+    // sprites flicker when the game rotates their order)
+    let found = 0;
+    for (let s = 0; s < 64 && found < 8; s++) {
+      const sy = oam[s * 4];
       if (sy >= 0xef) continue;
-      const top = sy + 1;
-      if (y < top || y >= top + 8) continue;
+      if (y >= sy + 1 && y < sy + 9) lineSprites[found++] = s;
+    }
+    // lower OAM index has priority; priority resolved before the BG test
+    for (let x = 0; x < SCREEN_W; x++) sprLine[x] = 0;
+    for (let n = found - 1; n >= 0; n--) {
+      const s = lineSprites[n];
+      const o = s * 4;
+      const top = oam[o] + 1;
       const tile = oam[o + 1];
       const at = oam[o + 2];
       const sxp = oam[o + 3];
@@ -163,7 +170,7 @@ function ppuRender(out /* Uint32Array 256*240 */) {
         if (xx >= SCREEN_W) break;
         const bit = sprChr[rowBase + ((at & 0x40) ? 7 - px : px)];
         if (bit === 0) continue;
-        // later (lower index) sprites overwrite: we iterate 63..0
+        // lower-index sprites are drawn last and win the pixel
         sprLine[xx] = 1 | (behind ? 2 : 0) | (pal[p + bit] << 8);
       }
     }
@@ -176,3 +183,4 @@ function ppuRender(out /* Uint32Array 256*240 */) {
   }
 }
 const sprLine = new Uint32Array(SCREEN_W);
+const lineSprites = new Uint8Array(8);
